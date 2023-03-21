@@ -6,6 +6,8 @@
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": ".",
+    "rootDir": ".",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,9 +20,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*" : ["./*"],
+      "@src/*": ["./src/*"],
+      "@pages/*": ["src/pages/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@assets/*": ["src/assets/*"],
+      "@svgs/*": ["src/assets/svgs/*"],
+      "@components/*": ["src/components/*"],
+    },
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src", "extensions.d.ts"]
 }
