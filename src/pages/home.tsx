@@ -31,7 +31,7 @@ const Home = () => {
                   <div className={'flex'}>
                      <Avatar size={'large'} />
                      <div className={'mx-1 my-0'}>
-                        <p><Rate value={4} /></p>
+                        <div><Rate value={4} disabled /></div>
                         <strong className={'text-xs'}>Timothy Exodus</strong>
                      </div>
                   </div>

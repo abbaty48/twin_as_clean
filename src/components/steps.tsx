@@ -56,8 +56,8 @@ const Steps: React.FC<IStepsProps> = (props) => {
             return _item
          })
          const _currentKey = items[_currentIndex + 1]?.key,
-            _previousKey = items[_currentIndex <= 0 ? 0 : _currentIndex - 1]?.key,
-            _nextKey = items[_currentIndex + 2]?.key;
+            _previousKey = items[Number(_currentKey) - 1 <= 0 ? 0 : Number(_currentKey) - 1]?.key,
+            _nextKey = items[_currentIndex + 1]?.key;
 
          set_items(_newItems)
          setActiveKey(_currentKey)
