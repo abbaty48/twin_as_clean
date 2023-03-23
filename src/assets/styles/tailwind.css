@@ -988,6 +988,10 @@ video {
   text-align: center;
 }
 
+.font-body {
+  font-family: gotham;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1167,6 +1171,10 @@ video {
 
 .hover\:bg-transparent:hover {
   background-color: transparent;
+}
+
+.hover\:bg-opacity-80:hover {
+  --tw-bg-opacity: 0.8;
 }
 
 .hover\:text-secondary-color:hover {

@@ -4,6 +4,9 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}"
   ],
   theme: {
+    fontFamily: {
+      'body': ['gotham']
+    },
     extend: {
       colors: {
         'primary-color': '#353535',

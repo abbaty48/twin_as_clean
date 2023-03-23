@@ -9,17 +9,17 @@ function Main() {
 
   return (
     <App>
-      <div className='relative h-screen'>
+      <div className='relative h-screen font-body text-primary-color'>
         <div className={'relative flex flex-col md:max-w-screen-lg w-[85%] m-auto py-4 h-full space-y-2'}>
           <div className={'flex flex-row flex-wrap justify-between items-center'}>
             {/* LOGO */}
-            <a href={'/'} className={'text-2xl font-semibold hover:text-secondary-color'}>
+            <a href={'/'} className={'text-2xl hover:text-secondary-color'}>
               <p>
-                Twice <span className={'rounded-full text-sm p-2 text-center text-white font-semibold bg-[#333] w-1 h-1  shadow-sm shadow-[rgb(110,110,110)]'}>AS</span> Clean
+                Twice <span className={'rounded-full text-sm p-2 text-center text-white bg-[#333] w-1 h-1  shadow-sm shadow-[rgb(110,110,110)]'}>AS</span> Clean
               </p>
             </a>
             {/* CONTACT */}
-            <button className={'rounded-2xl text-base p-3 bg-secondary-color text-white text-center font-bold'}>Contact Us</button>
+            <button className={'rounded-full text-base p-3 bg-secondary-color text-white text-center hover:bg-opacity-80'}>Contact Us</button>
           </div>
           <div className={'flex-1'}>
             <Router>

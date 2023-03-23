@@ -74,7 +74,7 @@ const SelectItemsPhase = (props: { setValue: (key: string, value: any) => void }
          </div>
          <div className={'flex flex-row items-center justify-between w-full py-3 px-2 rounded-2xl bg-[#f1f1f1]'}>
             <p className={'text-[18px]'}>Amount</p>
-            <strong className={'text-[24px] font-medium'}>10,000</strong>
+            <strong className={'text-[24px] font-semibold'}>10,000</strong>
          </div>
       </div>
    )
