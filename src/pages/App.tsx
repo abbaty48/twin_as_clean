@@ -1,6 +1,7 @@
 import { App } from 'antd'
 import Home from '@pages/home';
 import Schedule from '@pages/schedule';
+import Subscribe from '@pages/subscribe';
 import Completion from '@pages/completion';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
@@ -24,6 +25,7 @@ function Main() {
               <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/schedule' element={<Schedule />} />
+                <Route path="/subscribe" element={<Subscribe />} />
                 <Route path="/completion" element={<Completion />} />
                 <Route element={<Home />} />
               </Routes>
