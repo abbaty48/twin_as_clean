@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
-import { useSteps } from '@/src/hooks/useSteps'
+import Steps from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button, Input, InputNumber, Select } from 'antd'
 
@@ -128,12 +128,23 @@ const Schedule = () => {
 
    const [scheduleValue, setScheduleValue] = useState<ISchedule>(_initialValues)
    const navigate = useNavigate()
-   const { prevStep, Steps } = useSteps()
+   const [step, setStep] = useState({
+      nextKey: 1,
+      currentKey: 0,
+      previousKey: 0,
+   })
 
    const SetValue = (key: string, value: any) => {
       setScheduleValue(_value => ({
          ..._value,
          [key]: value
+      }))
+   }
+
+   const prevStep = () => {
+      setStep(_step => ({
+         ..._step,
+         currentKey: _step.previousKey
       }))
    }
 
@@ -147,22 +158,26 @@ const Schedule = () => {
                <Button type='text' onClick={() => navigate('/')} className={'hover:bg-transparent hover:animate-pulse flex items-center'} icon={<ReactSVG src={CloseSVG} />} />
             </div>
             {/* TAB */}
-            <Steps
+            <Steps activeKey={step.currentKey}
+               onStepChange={(currentKey, previousKey, nextKey) =>
+                  setStep({ currentKey, previousKey, nextKey })
+               }
                items={[
                   {
-                     key: 'phoneNumberPhase',
+                     label:
                      children: <PhoneNumberPhase setValue={SetValue} />
                   },
                   {
-                     key: 'locationPhase',
+                     active: false,
                      children: <LocationPhase setValue={SetValue} />
                   },
                   {
-                     key: 'seletionPhase',
+                     active: false,
                      children: <SelectItemsPhase setValue={SetValue} />
                   },
                   {
-                     key: 'summaryPhase',
+                     key: '3',
+                     active: false,
                      children: <SummaryPhase scheduleValue={scheduleValue} />
                   },
                ]} />
