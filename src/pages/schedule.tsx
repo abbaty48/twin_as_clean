@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ReactSVG } from 'react-svg'
 import { useSteps } from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
-import { Button, Input, InputNumber, Select } from 'antd'
+import { Button, Input, InputNumber, Select, App } from 'antd'
 
 import CloseSVG from '@svgs/x.svg'
 import CallSVG from '@svgs/call.svg'
@@ -18,16 +18,10 @@ interface ISchedule {
    }[]
 }
 
-const PhoneNumberPhase = (props: { setValue: (key: string, value: any) => void }) => {
+const PhoneNumberPhase = (props: { initialValue: string, setValue: (key: string, value: any) => void }) => {
 
-   const [value, setValue] = useState('')
-
-   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value: inputValue } = e.target;
-      if (/^[0-9]*$/.test(inputValue)) {
-         setValue(inputValue)
-      }
-   }
+   const { initialValue, setValue } = props
+   const { message } = App.useApp()
 
    return (
       <>
@@ -35,43 +29,55 @@ const PhoneNumberPhase = (props: { setValue: (key: string, value: any) => void }
             <h1 className={'text-[32px] leading-10 font-medium'}>Let's start with your number</h1>
             <p className={'text-lg leading-[132.2%]'}>Select your pick options</p>
             <Input type={'text'} size='large' prefix={<ReactSVG src={CallSVG} />}
-               placeholder='Phone Number'
-               onChange={handleChange}
-               value={value}
+               required autoFocus placeholder='Phone Number'
+               onChange={(e) => {
+                  if (/^[0-9]*$/.test(e.target.value)) {
+                     setValue('phoneNumber', e.target.value)
+                  } else {
+                     message.warning({ content: 'Only a number is allowed.' })
+                  }
+               }}
+               value={initialValue}
                className={'my-4 rounded-2xl py-2 px-4 w-full h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'} />
          </div>
       </>
    )
 }
 
-const LocationPhase = (props: { setValue: (key: string, value: any) => void }) => {
+const LocationPhase = (props: { initialValue: string, setValue: (key: string, value: any) => void }) => {
+
+   const { initialValue, setValue } = props
+
    return (
       <div className={'space-y-6 my-3 w-11/12 m-auto animate-fadeOut'}>
          <h1 className={'text-[32px] leading-10 font-medium'}>Where do we pick up?</h1>
          <p className={'text-lg leading-[132.2%]'}>Enter your pickup location.</p>
-         <Input type={'text'} size='large' prefix={<ReactSVG src={MapPinSVG} />} placeholder='Location'
+         <Input type={'text'} size='large' prefix={<ReactSVG src={MapPinSVG} />} autoFocus placeholder='Location'
             className={'my-4 rounded-2xl py-2 px-4 w-full h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'}
-            onChange={e => props.setValue('location', e.target.value)} />
+            value={initialValue}
+            onChange={e => setValue('location', e.target.value)} />
       </div>
    )
 }
 
-const SelectItemsPhase = (props: { setValue: (key: string, value: any) => void }) => {
-   const { setValue } = props
+const SelectItemsPhase = (props: { initialValue: { name: string, quantity: number }[], setValue: (key: string, value: any) => void }) => {
+   const { initialValue, setValue } = props
    return (
       <div className={'flex flex-col justify-between space-y-2 my-1 m-auto w-11/12 animate-fadeOut'}>
          <h1 className={'text-[32px] leading-10 font-medium'}>Select Items</h1>
          <p className={'text-lg leading-[132.2%]'}>Select cloth type and quantity</p>
-         <div className='flex flex-nowrap my-1 mx-3 justify-between space-x-2'>
-            <Select size='large' placeholder='Cloth Type'
-               className={'my-3 rounded-2xl py-2 px-4 w-2/4 h-[56px] border border-[#E1DFDD] bg-white  placeholder:text-[#919EAB]'} />
-            <InputNumber size='large' min={1} placeholder={'Quantity'} className={'my-3 rounded-2xl py-2 px-4 flex-1 h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'} />
-         </div>
-         <div className='flex flex-nowrap my-1 mx-3 justify-between space-x-2'>
-            <Select size='large' placeholder='Cloth Type'
-               className={'my-3 rounded-2xl py-2 px-4 w-2/4 h-[56px] border border-[#E1DFDD] bg-white placeholder:text-[#919EAB]'} />
-            <InputNumber size='large' min={1} placeholder={'Quantity'} className={'my-3 rounded-2xl py-2 px-4 flex-1 h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'} />
-         </div>
+         {
+            initialValue.map((_cloth, _index) =>
+               <div className='flex flex-nowrap my-1 mx-3 justify-between space-x-2'>
+                  <Select size='large' placeholder='Cloth Type'
+                     value={_cloth.name}
+                     className={'my-3 rounded-2xl py-2 px-4 w-2/4 h-[56px] border border-[#E1DFDD] bg-white  placeholder:text-[#919EAB]'}
+                  />
+                  <InputNumber size='large' min={1} placeholder={'Quantity'} value={_cloth.quantity}
+                     className={'my-3 rounded-2xl py-2 px-4 flex-1 h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'} />
+               </div>
+            )
+         }
          <div className={'flex flex-row items-center justify-between w-full py-3 px-2 rounded-2xl bg-[#f1f1f1]'}>
             <p className={'text-[18px]'}>Amount</p>
             <strong className={'text-[24px] font-semibold'}>10,000</strong>
@@ -117,21 +123,18 @@ const SummaryPhase = (props: { scheduleValue: ISchedule }) => {
 
 const Schedule = () => {
 
-   const _initialValues: ISchedule = {
-      phoneNumber: '081 23 23 4433',
-      location: 'Abaacha street, Lokogoma, Abuja',
-      cloths: [{
-         name: 'Trouser', quantity: 3
-      }, { name: 'Kaftan', quantity: 3 }]
+   let _initialValues: ISchedule = {
+      phoneNumber: '',
+      location: '',
+      cloths: []
    }
 
-
-   const [scheduleValue, setScheduleValue] = useState<ISchedule>(_initialValues)
+   const [scheduleValues, setScheduleValues] = useState<ISchedule>(_initialValues)
    const navigate = useNavigate()
    const { prevStep, Steps } = useSteps()
 
    const SetValue = (key: string, value: any) => {
-      setScheduleValue(_value => ({
+      setScheduleValues(_value => ({
          ..._value,
          [key]: value
       }))
@@ -151,19 +154,19 @@ const Schedule = () => {
                items={[
                   {
                      key: 'phoneNumberPhase',
-                     children: <PhoneNumberPhase setValue={SetValue} />
+                     children: <PhoneNumberPhase initialValue={scheduleValues.phoneNumber} setValue={SetValue} />
                   },
                   {
                      key: 'locationPhase',
-                     children: <LocationPhase setValue={SetValue} />
+                     children: <LocationPhase initialValue={scheduleValues.location} setValue={SetValue} />
                   },
                   {
                      key: 'seletionPhase',
-                     children: <SelectItemsPhase setValue={SetValue} />
+                     children: <SelectItemsPhase initialValue={scheduleValues.cloths} setValue={SetValue} />
                   },
                   {
                      key: 'summaryPhase',
-                     children: <SummaryPhase scheduleValue={scheduleValue} />
+                     children: <SummaryPhase scheduleValue={scheduleValues} />
                   },
                ]} />
             {/* PRICELIST */}
