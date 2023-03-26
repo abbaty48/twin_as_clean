@@ -1,8 +1,4 @@
-import { ReactSVG } from 'react-svg'
 import React, { ReactNode, useRef, useState } from 'react'
-
-
-import ArrowRight from '@svgs/arrow-right.svg'
 
 interface IStepsProps {
    showLabel?: boolean;
@@ -18,9 +14,9 @@ interface IStepItemProps {
    children: ReactNode
 }
 /** INDICATORS */
-const Indicators = (props: { Items: IStepItemProps[], currentIndex: number, showLabels?: boolean }) => {
+const Indicators = (props: { Items: IStepItemProps[], currentIndex: number, showLabels?: boolean, activeColor?: string, inActiveColor?: string }) => {
 
-   const { Items, currentIndex, showLabels } = props
+   const { Items, currentIndex, showLabels, activeColor, inActiveColor } = props
 
    const _containerRef = useRef<HTMLUListElement>(null)
 
@@ -28,13 +24,13 @@ const Indicators = (props: { Items: IStepItemProps[], currentIndex: number, show
       <ul className='flex flex-row justify-center items-center overflow-x-auto my-1' ref={_containerRef}>
          {
             Items.map((_item, index) => {
-               return <li key={_item.key} className={`rounded h-[2px] flex-1 mr-2 inline-block ${index <= currentIndex ? 'bg-secondary-color' : 'bg-[#BDBDBD]'}`}>
-                  {showLabels ? <span className={'inline-block text-center'}>{_item.label}</span> : ''}
+               return <li key={_item.key} className={`rounded h-[2px] flex-1 mr-2 inline-block ${index <= currentIndex ? activeColor ?? 'bg-secondary-color' : inActiveColor ?? 'bg-[#BDBDBD]'}`}>
+                  {showLabels && <span className={'inline-block text-center'}>{_item.label}</span>}
                </li>
             }
             )
          }
-      </ul>
+      </ul >
    )
 }
 /** STEPS */
@@ -66,8 +62,8 @@ export const useSteps = () => {
 
          // set the tracks
          setTrack({ currentIndex: _currentIndex, previousIndex: _previousIndex, nextIndex: _nextIndex })
-         // call the onStepChange
-         onStepChange?.call(this, _currentIndex, _previousIndex, _nextIndex)
+         // call the changeTrack
+         changeTrack?.call(this, _currentIndex, _previousIndex, _nextIndex)
       }
    }
    /** prevStep -> move back to the previous step */
@@ -80,13 +76,18 @@ export const useSteps = () => {
             _nextIndex = _currentIndex + 1; // increment currentIndex by 1
          // set the tracks
          setTrack({ currentIndex: _currentIndex, previousIndex: _previousIndex, nextIndex: _nextIndex })
-         // call the onStepChange
-         onStepChange?.call(this, _currentIndex, _previousIndex, _nextIndex)
+         // call the changeTrack
+         changeTrack?.call(this, _currentIndex, _previousIndex, _nextIndex)
       }
    }
-   /** onStepChange -> triggered when the nextStep or prevStep are fired. */
-   const onStepChange = (currentIndex: number, previousIndex: number, nextIndex: number) => {
+   /** changeTrack -> triggered when the nextStep or prevStep are fired. */
+   const changeTrack = (currentIndex: number, previousIndex: number, nextIndex: number) => {
       setTrack({ currentIndex, previousIndex, nextIndex })
+   }
+   /** */
+   const onStepChange = () => {
+      const { currentIndex, previousIndex, nextIndex } = track
+      return { currentIndex, previousIndex, nextIndex }
    }
 
    const Steps = (props: IStepsProps) => {
@@ -98,10 +99,6 @@ export const useSteps = () => {
          <>
             <CurrentChild activeIndex={track.currentIndex} items={items} />
             <Indicators Items={items} currentIndex={track.currentIndex} />
-            <button type='button' onClick={nextStep} className={'flex flex-row justify-center items-center gap-2 rounded-2xl bg-secondary-color py-4 text-[white_16px] w-full place-self-center'}>
-               <strong className={'text-white'}>Next</strong>
-               <ReactSVG src={ArrowRight} />
-            </button>
          </>
       )
    }

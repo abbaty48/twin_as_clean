@@ -2,11 +2,14 @@ import { useState } from 'react'
 import { ReactSVG } from 'react-svg'
 import { useSteps } from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { Button, Input, InputNumber, Select, App } from 'antd'
+import { ScheduleSelector } from '@recoil/selectors/scheduleSelector'
 
 import CloseSVG from '@svgs/x.svg'
 import CallSVG from '@svgs/call.svg'
 import MapPinSVG from '@svgs/map-pin.svg'
+import ArrowRight from '@svgs/arrow-right.svg'
 import BackArrowSVG from '@svgs/arrow-left.svg'
 
 interface ISchedule {
@@ -18,10 +21,10 @@ interface ISchedule {
    }[]
 }
 
-const PhoneNumberPhase = (props: { initialValue: string, setValue: (key: string, value: any) => void }) => {
+const PhoneNumberPhase = () => {
 
-   const { initialValue, setValue } = props
    const { message } = App.useApp()
+   const [getSchedule, setSchedule] = useRecoilState(ScheduleSelector)
 
    return (
       <>
@@ -32,21 +35,24 @@ const PhoneNumberPhase = (props: { initialValue: string, setValue: (key: string,
                required autoFocus placeholder='Phone Number'
                onChange={(e) => {
                   if (/^[0-9]*$/.test(e.target.value)) {
-                     setValue('phoneNumber', e.target.value)
+                     setSchedule((_preStates) => ({
+                        ..._preStates,
+                        phoneNumber: e.target.value
+                     }))
                   } else {
                      message.warning({ content: 'Only a number is allowed.' })
                   }
                }}
-               value={initialValue}
+               value={getSchedule.phoneNumber}
                className={'my-4 rounded-2xl py-2 px-4 w-full h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'} />
          </div>
       </>
    )
 }
 
-const LocationPhase = (props: { initialValue: string, setValue: (key: string, value: any) => void }) => {
+const LocationPhase = () => {
 
-   const { initialValue, setValue } = props
+   const [getSchedule, setSchedule] = useRecoilState(ScheduleSelector)
 
    return (
       <div className={'space-y-6 my-3 w-11/12 m-auto animate-fadeOut'}>
@@ -54,20 +60,27 @@ const LocationPhase = (props: { initialValue: string, setValue: (key: string, va
          <p className={'text-lg leading-[132.2%]'}>Enter your pickup location.</p>
          <Input type={'text'} size='large' prefix={<ReactSVG src={MapPinSVG} />} autoFocus placeholder='Location'
             className={'my-4 rounded-2xl py-2 px-4 w-full h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'}
-            value={initialValue}
-            onChange={e => setValue('location', e.target.value)} />
+            value={getSchedule.location}
+            onChange={e =>
+               setSchedule((_preStates) => ({
+                  ..._preStates,
+                  location: e.target.value
+               }))
+            } />
       </div>
    )
 }
 
-const SelectItemsPhase = (props: { initialValue: { name: string, quantity: number }[], setValue: (key: string, value: any) => void }) => {
-   const { initialValue, setValue } = props
+const SelectItemsPhase = () => {
+
+   const [getSchedule, setSchedule] = useRecoilState(ScheduleSelector)
+
    return (
       <div className={'flex flex-col justify-between space-y-2 my-1 m-auto w-11/12 animate-fadeOut'}>
          <h1 className={'text-[32px] leading-10 font-medium'}>Select Items</h1>
          <p className={'text-lg leading-[132.2%]'}>Select cloth type and quantity</p>
          {
-            initialValue.map((_cloth, _index) =>
+            getSchedule.cloths.map((_cloth, _index) =>
                <div className='flex flex-nowrap my-1 mx-3 justify-between space-x-2'>
                   <Select size='large' placeholder='Cloth Type'
                      value={_cloth.name}
@@ -129,9 +142,10 @@ const Schedule = () => {
       cloths: []
    }
 
-   const [scheduleValues, setScheduleValues] = useState<ISchedule>(_initialValues)
    const navigate = useNavigate()
-   const { prevStep, Steps } = useSteps()
+   const getSchedule = useRecoilValue(ScheduleSelector)
+   const { nextStep, prevStep, onStepChange, Steps } = useSteps()
+   const [scheduleValues, setScheduleValues] = useState<ISchedule>(_initialValues)
 
    const SetValue = (key: string, value: any) => {
       setScheduleValues(_value => ({
@@ -139,6 +153,16 @@ const Schedule = () => {
          [key]: value
       }))
    }
+
+   const isValidateStep = () => {
+      const { currentIndex } = onStepChange()
+      switch (currentIndex) {
+         case 0: return getSchedule.phoneNumber === '' ? !false : !true;
+         case 1: return getSchedule.location === '' ? !false : !true;
+         case 2: return getSchedule.cloths.length <= 0 ? !false : !true;
+      }
+   }
+
 
    return (
       <div className={'relative h-full flex justify-center items-center object-center my-3 '}>
@@ -154,7 +178,8 @@ const Schedule = () => {
                items={[
                   {
                      key: 'phoneNumberPhase',
-                     children: <PhoneNumberPhase initialValue={scheduleValues.phoneNumber} setValue={SetValue} />
+                     // children: <PhoneNumberPhase initialValue={scheduleValues.phoneNumber} setValue={SetValue} />
+                     children: <PhoneNumberPhase />
                   },
                   {
                      key: 'locationPhase',
@@ -169,6 +194,12 @@ const Schedule = () => {
                      children: <SummaryPhase scheduleValue={scheduleValues} />
                   },
                ]} />
+            {/* NEXT BUTTON */}
+            <button type='button' disabled={isValidateStep()} onClick={nextStep}
+               className={'flex flex-row justify-center items-center gap-2 rounded-2xl bg-secondary-color py-4 text-[white_16px] w-full place-self-center disabled:bg-opacity-70 disabled:cursor-not-allowed'}>
+               <strong className={'text-white'}>Next</strong>
+               <ReactSVG src={ArrowRight} />
+            </button>
             {/* PRICELIST */}
             <Link to={'/'} className={'w-auto underline underline-offset-2 text-center font-medium text-black hover:text-secondary-color'}>See our price list</Link>
          </div>
