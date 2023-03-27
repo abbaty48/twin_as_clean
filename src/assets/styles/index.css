@@ -6,8 +6,25 @@
 @import url('./tailwind.css');
 @import url('../fonts/gotham/gotham.css');
 
-body, html {
+* {
+  outline: none;
+  font-family: 'gotham';
+}
+
+body,
+html {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar STYLE*/
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 5px;
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #0087D2;
 }

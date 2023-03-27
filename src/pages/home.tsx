@@ -11,7 +11,7 @@ import foldClothPNG from '@assets/imgs/foldclothXL.png';
 const Home = () => {
    return (
 
-      <><div className={'flex flex-row flex-wrap md:flex-nowrap justify-between items-center md:items-start md:mt-10'}>
+      <><div className={'flex flex-row flex-wrap md:flex-nowrap justify-between items-center md:items-start md:mt-10 animate-fadeOut'}>
          <div className={'my-4 md:w-[458px] '}>
             <h1 className={'text-[64px] leading-[71px] font-medium'}><span className={'text-secondary-color'}>Affordable</span> Dry Cleaning for Everyone</h1>
             <p className={'text-[18px] leading-[132.2%] my-2'}>At Twice As Clean, we provide top-notch dry cleaning services to help you keep your clothes looking their best.</p>

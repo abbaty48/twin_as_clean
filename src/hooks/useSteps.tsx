@@ -24,8 +24,9 @@ const Indicators = (props: { Items: IStepItemProps[], currentIndex: number, show
       <ul className='flex flex-row justify-center items-center overflow-x-auto my-1' ref={_containerRef}>
          {
             Items.map((_item, index) => {
-               return <li key={_item.key} className={`rounded h-[2px] flex-1 mr-2 inline-block ${index <= currentIndex ? activeColor ?? 'bg-secondary-color' : inActiveColor ?? 'bg-[#BDBDBD]'}`}>
-                  {showLabels && <span className={'inline-block text-center'}>{_item.label}</span>}
+               return <li key={_item.key}
+                  className={`rounded h-[2px] flex-1 mr-2 inline-block ${index <= currentIndex ? activeColor ?? 'bg-secondary-color' : inActiveColor ?? 'bg-[#BDBDBD]'}`}>
+                  {showLabels ? <span className={'inline-block text-center'}>{_item.label}</span> : ''}
                </li>
             }
             )
@@ -98,7 +99,7 @@ export const useSteps = () => {
       return (
          <>
             <CurrentChild activeIndex={track.currentIndex} items={items} />
-            <Indicators Items={items} currentIndex={track.currentIndex} />
+            {showIndicator && <Indicators Items={items} currentIndex={track.currentIndex} showLabels={showLabel} activeColor={activeColor} inActiveColor={inActiveColor} />}
          </>
       )
    }

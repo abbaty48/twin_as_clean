@@ -1,28 +1,29 @@
+import axios from 'axios'
 import { useState } from 'react'
+import { Async } from 'react-async'
 import { ReactSVG } from 'react-svg'
 import { useSteps } from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
-import { Button, Input, InputNumber, Select, App } from 'antd'
-import { ScheduleSelector } from '@recoil/selectors/scheduleSelector'
+import { AddMore, AddMoreOrientation } from '@components/addMore'
+import { Button, Input, InputNumber, Select, App, Spin, Space } from 'antd'
 
 import CloseSVG from '@svgs/x.svg'
 import CallSVG from '@svgs/call.svg'
 import MapPinSVG from '@svgs/map-pin.svg'
 import ArrowRight from '@svgs/arrow-right.svg'
 import BackArrowSVG from '@svgs/arrow-left.svg'
+import { DefaultOptionType } from 'antd/es/select'
+import { ISchedule } from '@models/interfaces/ischedule'
+import { IMaterial } from '@commons/models/interfaces/imaterial'
+import { useRecoilState } from 'recoil'
 
-interface ISchedule {
-   phoneNumber: string
-   location: string
-   cloths: {
-      name: string
-      quantity: number
-   }[]
-}
+
+const PhoneNumberPhase = (props: { initialValue: string, setValue: (key: string, value: any) => void }) => {
 
 const PhoneNumberPhase = () => {
 
+   const { initialValue, setValue } = props
+   const key = 'phoneNumberKey'
    const { message } = App.useApp()
    const [getSchedule, setSchedule] = useRecoilState(ScheduleSelector)
 
@@ -40,7 +41,7 @@ const PhoneNumberPhase = () => {
                         phoneNumber: e.target.value
                      }))
                   } else {
-                     message.warning({ content: 'Only a number is allowed.' })
+                     message.warning({ key, content: 'Only a number is allowed.' })
                   }
                }}
                value={getSchedule.phoneNumber}
@@ -75,25 +76,102 @@ const SelectItemsPhase = () => {
 
    const [getSchedule, setSchedule] = useRecoilState(ScheduleSelector)
 
+const SelectItemsPhase = (props: { initialValue: { name: string, quantity: number, subPrice: number }[], setValue: (key: string, value: any) => void }) => {
+
+
+   // 
+   const { initialValue, setValue } = props
+   // 
+   const { Option } = Select
+   // FETCH MATERIALS FROM SERVER
+   const loadMaterial = async () => {
+      try {
+         return (await axios.get<IMaterial[]>('http://18.209.48.108/materials', { headers: { Accept: 'application/json' } })).data
+      } catch (error: any) {
+         throw new Error(error.message)
+      }
+   }
+
+   /** MATERIAL COMPONENT */
+   const Material = (props: { materials: IMaterial[] }) => {
+
+      const { materials } = props
+      //
+      const [material, setMaterial] = useState<IMaterial>({
+         name: materials[0].name,
+         price: materials[0].price,
+         quantity: 1,
+         subPrice: materials[0].price * 1
+      })
+      //
+      setValue('cloths', [
+         ...initialValue,
+         { name: material.name, quantity: material.quantity, subPrice: material.subPrice }
+      ])
+
+      const onQuantityChange = (quantity: number | null) => {
+         setMaterial(_values => ({
+            ..._values,
+            quantity: quantity!,
+            subPrice: _values.price * _values.quantity
+         }))
+      } // end onQuantityChange
+
+      const onMaterialChange = (value: any, option: DefaultOptionType | DefaultOptionType[]) => {
+         const _valueParse = JSON.parse(value) as { name: string, price: number }
+         setMaterial(_values => ({
+            ..._values,
+            name: _valueParse.name,
+            price: _valueParse.price,
+            subPrice: _valueParse.price * _values.quantity
+         }))
+
+         setValue('cloths', [...Object.assign(initialValue, material)])
+      } // end onMaterialChange
+
+      return <div className='flex flex-nowrap my-1 mx-3 items-center justify-between space-x-2 w-full'>
+         <Select size='large' placeholder='Cloth Type' labelInValue={false}
+            className={'my-3 flex-1 bg-white placeholder:text-[#919EAB]'}
+            onChange={onMaterialChange}
+         >
+            {
+               materials.map(_option =>
+                  <Option key={_option.name} value={JSON.stringify({ name: _option.name, price: _option.price })}>
+                     <Space>
+                        <span>{_option.name}</span>
+                        <strong>({_option.price})</strong>
+                     </Space>
+                  </Option>
+               )
+            }
+
+         </Select>
+         <InputNumber size='large' min={1} defaultValue={1} placeholder={'Quantity'}
+            className={'my-3 border border-[#E1DFDD] placeholder:text-[#919EAB]'} onChange={onQuantityChange} />
+      </div>
+   }
+
    return (
       <div className={'flex flex-col justify-between space-y-2 my-1 m-auto w-11/12 animate-fadeOut'}>
          <h1 className={'text-[32px] leading-10 font-medium'}>Select Items</h1>
          <p className={'text-lg leading-[132.2%]'}>Select cloth type and quantity</p>
-         {
-            getSchedule.cloths.map((_cloth, _index) =>
-               <div className='flex flex-nowrap my-1 mx-3 justify-between space-x-2'>
-                  <Select size='large' placeholder='Cloth Type'
-                     value={_cloth.name}
-                     className={'my-3 rounded-2xl py-2 px-4 w-2/4 h-[56px] border border-[#E1DFDD] bg-white  placeholder:text-[#919EAB]'}
-                  />
-                  <InputNumber size='large' min={1} placeholder={'Quantity'} value={_cloth.quantity}
-                     className={'my-3 rounded-2xl py-2 px-4 flex-1 h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'} />
-               </div>
-            )
-         }
-         <div className={'flex flex-row items-center justify-between w-full py-3 px-2 rounded-2xl bg-[#f1f1f1]'}>
+         <Async promiseFn={loadMaterial}>
+            {
+               ({ data, error, isLoading }) => {
+                  if (isLoading) return <Spin size='large' spinning={true} />
+                  if (error) return <p className={'my-1 text-center text-orange-700 font-semibold'}>Something went wrong: {error.message}</p>
+                  if (data) {
+                     return <div className={'max-h-48 overflow-y-auto'}>
+                        <AddMore ReplicateNode={<Material materials={data} />} orientation={AddMoreOrientation.Vertical} addMoreButtonClass='text-3xl' removeButtonClass='text-2xl' />
+                     </div>
+                  }
+                  return null
+               }
+            }
+         </Async>
+         <div className={'flex flex-row items-center justify-between w-full py-2 px-5 rounded-2xl bg-[#f1f1f1]'}>
             <p className={'text-[18px]'}>Amount</p>
-            <strong className={'text-[24px] font-semibold'}>10,000</strong>
+            <strong className={'text-[24px] font-semibold'}>0</strong>
          </div>
       </div>
    )
@@ -147,22 +225,13 @@ const Schedule = () => {
    const { nextStep, prevStep, onStepChange, Steps } = useSteps()
    const [scheduleValues, setScheduleValues] = useState<ISchedule>(_initialValues)
 
+   // SetValue
    const SetValue = (key: string, value: any) => {
       setScheduleValues(_value => ({
          ..._value,
          [key]: value
       }))
    }
-
-   const isValidateStep = () => {
-      const { currentIndex } = onStepChange()
-      switch (currentIndex) {
-         case 0: return getSchedule.phoneNumber === '' ? !false : !true;
-         case 1: return getSchedule.location === '' ? !false : !true;
-         case 2: return getSchedule.cloths.length <= 0 ? !false : !true;
-      }
-   }
-
 
    return (
       <div className={'relative h-full flex justify-center items-center object-center my-3 '}>
@@ -173,8 +242,9 @@ const Schedule = () => {
                <Button type='text' onClick={prevStep} className={'hover:bg-transparent hover:animate-pulse flex items-center'} icon={<ReactSVG src={BackArrowSVG} />} />
                <Button type='text' onClick={() => navigate('/')} className={'hover:bg-transparent hover:animate-pulse flex items-center'} icon={<ReactSVG src={CloseSVG} />} />
             </div>
-            {/* TAB */}
+            {/* STEPS */}
             <Steps
+               showIndicator={true}
                items={[
                   {
                      key: 'phoneNumberPhase',
