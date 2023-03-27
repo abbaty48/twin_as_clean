@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 
 export enum AddMoreOrientation { Horizonatal, Vertical }
 
@@ -17,7 +17,7 @@ interface IAddMore {
    overlayContainerClass?: string
    orientation?: AddMoreOrientation
    ReplicateNode: JSX.Element,
-   onChange?: (nodes: JSX.Element[]) => void
+   onChange?: (nodes: JSX.Element[], action: 'added' | 'removed' | 'empty') => void
 }
 
 export const AddMore = (props: IAddMore) => {
@@ -49,15 +49,20 @@ export const AddMore = (props: IAddMore) => {
                }}>
                {removeButtonIcon ?? '-'}
             </button>
+
          </div>
       )
    }
    const [nodes, setNodes] = useState<JSX.Element[]>(children?.length! > 0 ? [...children!.map(child => newNode(child))] : [newNode()])
 
+   useEffect(() => {
+      onChange?.call(this, nodes, nodes.length > 0 ? 'added' : 'empty')
+   }, [onChange])
+
    const addNode = () => {
       setNodes(prevNode => {
          const newNodes = [...prevNode, newNode()]
-         onChange?.call(this, newNodes)
+         onChange?.call(this, newNodes, 'added')
          return newNodes
       })
    }
@@ -66,7 +71,7 @@ export const AddMore = (props: IAddMore) => {
       setNodes(prevNodes => {
          if (prevNodes.length <= 1) return prevNodes
          const newNodes = prevNodes.filter(n => n.key?.toString() !== key)
-         onChange?.call(this, newNodes)
+         onChange?.call(this, newNodes, 'removed')
          return newNodes
       })
    }

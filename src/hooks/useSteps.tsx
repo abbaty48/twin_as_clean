@@ -63,8 +63,6 @@ export const useSteps = () => {
 
          // set the tracks
          setTrack({ currentIndex: _currentIndex, previousIndex: _previousIndex, nextIndex: _nextIndex })
-         // call the changeTrack
-         changeTrack?.call(this, _currentIndex, _previousIndex, _nextIndex)
       }
    }
    /** prevStep -> move back to the previous step */
@@ -77,13 +75,7 @@ export const useSteps = () => {
             _nextIndex = _currentIndex + 1; // increment currentIndex by 1
          // set the tracks
          setTrack({ currentIndex: _currentIndex, previousIndex: _previousIndex, nextIndex: _nextIndex })
-         // call the changeTrack
-         changeTrack?.call(this, _currentIndex, _previousIndex, _nextIndex)
       }
-   }
-   /** changeTrack -> triggered when the nextStep or prevStep are fired. */
-   const changeTrack = (currentIndex: number, previousIndex: number, nextIndex: number) => {
-      setTrack({ currentIndex, previousIndex, nextIndex })
    }
    /** */
    const onStepChange = () => {

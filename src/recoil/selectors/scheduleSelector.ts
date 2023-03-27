@@ -7,7 +7,10 @@ export const ScheduleSelector = selector<ISchedule>({
   get({ get }) {
     return get(ScheduleState);
   },
-  set({ set }, newValue) {
-    set(ScheduleState, newValue);
+  set({ set, get }, newValue) {
+    const oldValue = get(ScheduleState);
+    if (oldValue !== newValue) {
+      set(ScheduleState, newValue);
+    }
   },
 });

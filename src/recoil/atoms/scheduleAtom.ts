@@ -7,5 +7,15 @@ export const ScheduleState = atom<ISchedule>({
     phoneNumber: '',
     location: '',
     cloths: [],
+    totalAmountOnline: 0,
+    totalAmountOnPickup: 0,
   },
+  // effects_UNSTABLE: [
+  //   ({ onSet, setSelf }) => {
+  //     onSet(async (newValue, oldValue) => {
+  //       if(newValue === oldValue) return;
+  //       setSelf(newValue);
+  //     });
+  //   },
+  // ],
 });
