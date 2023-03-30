@@ -13,13 +13,13 @@ const Home = () => {
 
       <><div className={'flex flex-row flex-wrap md:flex-nowrap justify-between items-center md:items-start md:mt-10 animate-fadeOut'}>
          <div className={'my-4 md:w-[458px] '}>
-            <h1 className={'text-[64px] leading-[71px] font-medium'}><span className={'text-secondary-color'}>Affordable</span> Dry Cleaning for Everyone</h1>
-            <p className={'text-[18px] leading-[132.2%] my-2'}>At Twice As Clean, we provide top-notch dry cleaning services to help you keep your clothes looking their best.</p>
+            <h1 className={'text-[64px] leading-[71px] md:w-[458px] font-black'}><span className={'text-secondary-color'}>Affordable</span> Dry Cleaning for Everyone</h1>
+            <p className={'text-[18px] leading-[132.2%] my-2 font-normal'}>At Twice As Clean, we provide top-notch dry cleaning services to help you keep your clothes looking their best.</p>
             <Link to={'/subscribe'} className={'block bg-secondary-color rounded-2xl h-[64px] my-4 py-5 text-center hover:bg-opacity-80'}>
-               <span className={'text-white text-[18px] leading-[26px]'}>Subscribe</span>
+               <span className={'text-white text-[18px] leading-[26px] font-bold'}>Subscribe</span>
             </Link>
             <Link to={'/schedule'} className={'block border border-secondary-color rounded-2xl h-[64px] my-4 py-4 text-center hover:bg-opacity-80'}>
-               <span className={'text-secondary-color text-[18px] leading-[26px]'}>Schedule Pickup Today</span>
+               <span className={'text-secondary-color text-[18px] leading-[26px] font-bold'}>Schedule Pickup Today</span>
             </Link>
          </div>
          {/*  */}
@@ -32,11 +32,11 @@ const Home = () => {
                      <Avatar size={'large'} />
                      <div className={'mx-1 my-0'}>
                         <div><Rate value={4} disabled /></div>
-                        <strong className={'text-xs font-semibold'}>Timothy Exodus</strong>
+                        <strong className={'text-xs font-medium'}>Timothy Exodus</strong>
                      </div>
                   </div>
                   {/* TESTOMONY_COMMENT */}
-                  <p className='overflow-hidden text-ellipsis text-[13px] my-2 font-medium'>I used their service and it was really good, it was fast and cheaper.</p>
+                  <p className='overflow-hidden text-ellipsis text-[13px] my-1 font-normal'>I used their service and it was really good, it was fast and cheaper.</p>
                </div>
                <img src={foldClothPNG} alt={'foldcloth'} />
                <img src={effectPNG} alt={'dropeffect'} className='fixed z-50 bottom-0 right-0 h-[300px] md:h-[550px]' />

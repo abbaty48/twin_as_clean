@@ -1,27 +1,30 @@
 import { App } from 'antd'
 import Home from '@pages/home';
+import {StoreProvider} from 'easy-peasy'
 import Schedule from '@pages/schedule';
 import Subscribe from '@pages/subscribe';
 import Completion from '@pages/completion';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
-import { RecoilRoot } from 'recoil';
+import { scheduleStore } from '../store/scheduleStore';
 
 function Main() {
 
   return (
-    <RecoilRoot>
+    <StoreProvider store={scheduleStore}>
       <App>
         <div className='relative h-screen font-body text-primary-color'>
           <div className={'relative flex flex-col md:max-w-screen-lg w-[85%] m-auto py-4 h-full space-y-2'}>
             <div className={'flex flex-row flex-wrap justify-between items-center'}>
               {/* LOGO */}
               <a href={'/'} className={'text-2xl hover:text-secondary-color'}>
-                <p>
-                  Twice <span className={'rounded-full text-sm p-2 text-center text-white bg-[#333] w-1 h-1  shadow-sm shadow-[rgb(110,110,110)]'}>AS</span> Clean
-                </p>
+                <div className={'font-extrabold flex items-center space-x-2'}>
+                  <p>Twice</p>
+                  <p className={'inline-block  rounded-full text-[10px] leading-6 h-5 w-5 text-center text-white bg-secondary-color shadow-sm shadow-[rgb(110,110,110)]'}>AS</p>
+                  <p>Clean</p>
+                </div>
               </a>
               {/* CONTACT */}
-              <button className={'rounded-full text-base p-3 bg-secondary-color text-white text-center hover:bg-opacity-80'}>Contact Us</button>
+              <button className={'rounded-full text-base p-3 bg-secondary-color text-white text-center font-bold hover:bg-opacity-80'}>Contact Us</button>
             </div>
             <div className={'flex-1'}>
               <Router>
@@ -37,9 +40,7 @@ function Main() {
           </div>
         </div>
       </App>
-    </RecoilRoot>
-
-  );
+    </StoreProvider>);
 }
 
 export default Main;

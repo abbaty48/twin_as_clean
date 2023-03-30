@@ -1,23 +1,24 @@
 import { Button } from 'antd'
+import CloseSVG from '@svgs/x.svg'
 import { ReactSVG } from 'react-svg'
 import { useRecoilValue } from 'recoil'
+import ArrowRight from '@svgs/arrow-right.svg'
+import BackArrowSVG from '@svgs/arrow-left.svg'
 import { useSteps } from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
 import { SummaryPhase } from '@pages/schedule-summary'
 import { LocationPhase } from '@pages/schedule-location'
 import { PhoneNumberPhase } from '@pages/schedule-phonenumber'
 import { SelectItemsPhase } from '@pages/schedule-selectMaterials'
-import { ScheduleSelector } from '@recoil/selectors/scheduleSelector'
+import { useStoreState, State } from 'easy-peasy'
+import { ISchedule } from '../commons/models/interfaces/ischedule'
 
-import CloseSVG from '@svgs/x.svg'
-import ArrowRight from '@svgs/arrow-right.svg'
-import BackArrowSVG from '@svgs/arrow-left.svg'
 
 
 const Schedule = () => {
 
    const navigate = useNavigate()
-   const getSchedule = useRecoilValue(ScheduleSelector)
+   const getSchedule = useStoreState((state: State<ISchedule>) => state)
    const { nextStep, prevStep, onStepChange, Steps } = useSteps()
 
    /** STEP VALIDATOR */
@@ -25,8 +26,8 @@ const Schedule = () => {
       const { currentIndex } = onStepChange()
       switch (currentIndex) {
          case 0: return getSchedule.phoneNumber === '' ? !false : !true;
-         case 0: return getSchedule.location === '' ? !false : !true;
-         case 0: return getSchedule.cloths.length <= 0 ? !false : !true;
+         case 1: return getSchedule.location === '' ? !false : !true;
+         case 2: return getSchedule.materials.length <= 0 ? !false : !true;
       }
    } // end isValidateStep
 
@@ -62,7 +63,7 @@ const Schedule = () => {
                ]} />
             {/* NEXT BUTTON */}
             <button type='button' disabled={isValidateStep()} onClick={nextStep}
-               className={'flex flex-row justify-center items-center gap-2 rounded-2xl bg-secondary-color py-4 text-[white_16px] w-full place-self-center disabled:bg-opacity-70 disabled:cursor-not-allowed'}>
+               className={'flex flex-row justify-center items-center gap-2 rounded-2xl bg-secondary-color py-4 text-[white_16px] w-full place-self-center font-black text-black disabled:bg-opacity-70 disabled:cursor-not-allowed'}>
                <strong className={'text-white'}>Next</strong>
                <ReactSVG src={ArrowRight} />
             </button>
