@@ -57,7 +57,7 @@ export const AddMore = (props: IAddMore) => {
 
    useEffect(() => {
       onChange?.call(this, nodes, nodes.length > 0 ? 'added' : 'empty')
-   }, [onChange])
+   }, [])
 
    const addNode = () => {
       setNodes(prevNode => {

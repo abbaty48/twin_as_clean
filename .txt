@@ -54,6 +54,7 @@ const Material = (props: { materials: IMaterial[] }) => {
    } // end onMaterialChange
 
    return <div className='flex flex-nowrap my-1 mx-3 items-center justify-between space-x-2 w-full'>
+   
       <Select size='large' placeholder='Cloth Type' labelInValue={false}
          defaultValue={JSON.stringify({ name: material.name, price: material.price })}
          className={'my-3 flex-1 bg-white placeholder:text-[#919EAB]'}
@@ -185,3 +186,52 @@ const SelectItemsPhase = () => {
       </div>
    )
 }
+
+
+ <Async promiseFn={loadMaterial}>
+               {
+                  ({ data, error, isLoading }) => {
+                     if (isLoading) return <Spin size='large' spinning={true} className={'place-self-center object-center'} />
+                     if (error) return <p className={'my-1 text-center text-orange-700 font-semibold text-xs'}>Oops!! something went wrong: {error.message}</p>
+                     if (data) {
+                        if (data.length <= 0) {
+                           return <p>No Material available yet!.</p>
+                        } else {
+
+                           return <>
+                              {
+                                 selectedMaterials.map(_option => (
+                                    <Material key={_option.name} materials={[{ ..._option }]} />
+                                 ))
+                              }
+                              <button className={'my-2 w-full h-10 bg-secondary-color rounded-2xl py-3 px-2'} onClick={addMoreMaterial}>
+                                 + Add More
+                              </button>
+                           </>
+                        } // end else
+                     } // end if data
+                     return null
+                  }
+               }
+            </Async>
+
+
+               <>
+            {isFetching && <Spin />}
+            {
+               materials === undefined ? <p className={'text-center font-body my-3'}>No Material available yet!.</p> :
+                  materials.length > 0 && <>
+                     <div className={'max-h-32 overflow-y-auto'}>
+
+                        {
+                           selectedMaterials?.map(_option => (
+                              <Material key={_option.id} materials={unSelectedMaterials} />
+                           ))
+                        }
+                     </div>
+                     <button className={'my-2 w-full h-10 bg-secondary-color rounded-2xl py-3 px-2 text-white'} onClick={addMoreMaterial}>
+                        + Add More
+                     </button>
+                  </>
+            }
+         </>

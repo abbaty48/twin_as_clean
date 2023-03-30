@@ -14,7 +14,7 @@ export const PhoneNumberPhase = () => {
    return (
       <>
          <div className={'space-y-6 my-3 w-11/12 m-auto'}>
-            <h1 className={'text-[32px] leading-10 font-medium'}>Let's start with your number</h1>
+            <h1 className={'text-[32px] leading-10 font-black text-black'}>Let's start with your number</h1>
             <p className={'text-lg leading-[132.2%]'}>Select your pick options</p>
             <Input type={'text'} size='large' prefix={<ReactSVG src={CallSVG} />}
                required autoFocus placeholder='Phone Number'
