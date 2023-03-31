@@ -1,16 +1,15 @@
 import { App } from 'antd'
 import Home from '@pages/home';
-import {StoreProvider} from 'easy-peasy'
+import { RecoilRoot } from 'recoil'
 import Schedule from '@pages/schedule';
 import Subscribe from '@pages/subscribe';
 import Completion from '@pages/completion';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
-import { scheduleStore } from '../store/scheduleStore';
 
 function Main() {
 
   return (
-    <StoreProvider store={scheduleStore}>
+    <RecoilRoot>
       <App>
         <div className='relative h-screen font-body text-primary-color'>
           <div className={'relative flex flex-col md:max-w-screen-lg w-[85%] m-auto py-4 h-full space-y-2'}>
@@ -40,7 +39,7 @@ function Main() {
           </div>
         </div>
       </App>
-    </StoreProvider>);
+    </RecoilRoot>);
 }
 
 export default Main;

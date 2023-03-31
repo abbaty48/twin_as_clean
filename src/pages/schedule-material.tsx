@@ -15,7 +15,7 @@ export const Material = (props: { materials: IMaterial[] }) => {
    // 
    const { Option } = Select
    //
-   const [{  }, setSchedule] = useRecoilState(ScheduleSelector)
+   const [{ }, setSchedule] = useRecoilState(ScheduleSelector)
    //
    const [material, setMaterial] = useState<IMaterial>({
       id: materials[0]?.id,
@@ -24,7 +24,8 @@ export const Material = (props: { materials: IMaterial[] }) => {
       quantity: materials[0]?.quantity,
       subPrice: materials[0]?.price * 1
    })
-   // 
+   //
+   
 
    const onQuantityChange = (quantity: number | null) => {
       const _updateMaterial = Object.assign({ ...material }, { ['quantity']: quantity!, ['subPrice']: material.price * material.quantity })
@@ -39,9 +40,21 @@ export const Material = (props: { materials: IMaterial[] }) => {
       const _updateMaterial = Object.assign({ ...material }, { name, price, subPrice: price * material.quantity })
       //
       setMaterial(_values => ({
-         ..._values,
          ..._updateMaterial
       }))
+
+      console.log("UM: ", _updateMaterial)
+      setSchedule((prevStates) => ({
+         ...prevStates,
+         selectedMaterials: [
+            ...prevStates.selectedMaterials.map(material => {
+               if (material.id === targetId) {
+                  return {...material, ..._updateMaterial }
+               }
+               return material
+            }) // end map
+         ], // end selectedMaterials
+      })) // end setSchedule
    } // end onMaterialChange
 
    return <div className='flex flex-nowrap my-1 items-center justify-between space-x-2 relative'>

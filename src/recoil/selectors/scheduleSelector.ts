@@ -1,4 +1,5 @@
-import { selector } from 'recoil';
+import _ from 'deep-equal';
+import { DefaultValue, selector } from 'recoil';
 import { ScheduleState } from '@recoil/atoms/scheduleAtom';
 import { ISchedule } from '@/src/commons/models/interfaces/ischedule';
 
@@ -9,9 +10,10 @@ export const ScheduleSelector = selector<ISchedule>({
   },
   set({ set, get }, newValue) {
     const oldValue = get(ScheduleState);
-    if (oldValue !== newValue) {
+    // perform a deep object comparison
+    if (!_(newValue, oldValue, { strict: true })) {
+      console.log('OV: ', oldValue, ' NV: ', newValue)
       set(ScheduleState, newValue);
-    }
-  },
-});
-
+    } // end if
+  }, // end set
+}); // end selector

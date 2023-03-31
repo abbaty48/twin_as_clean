@@ -10,15 +10,14 @@ import { SummaryPhase } from '@pages/schedule-summary'
 import { LocationPhase } from '@pages/schedule-location'
 import { PhoneNumberPhase } from '@pages/schedule-phonenumber'
 import { SelectItemsPhase } from '@pages/schedule-selectMaterials'
-import { useStoreState, State } from 'easy-peasy'
-import { ISchedule } from '../commons/models/interfaces/ischedule'
+import { ScheduleSelector } from '@recoil/selectors/scheduleSelector'
 
 
 
 const Schedule = () => {
 
    const navigate = useNavigate()
-   const getSchedule = useStoreState((state: State<ISchedule>) => state)
+   const getSchedule = useRecoilValue(ScheduleSelector)
    const { nextStep, prevStep, onStepChange, Steps } = useSteps()
 
    /** STEP VALIDATOR */

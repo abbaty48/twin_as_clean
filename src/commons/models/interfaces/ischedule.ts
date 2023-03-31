@@ -1,5 +1,4 @@
 import { IMaterial } from '@models/interfaces/imaterial';
-import { Action } from 'easy-peasy';
 
 export interface ISchedule {
   phoneNumber: string;
@@ -9,5 +8,4 @@ export interface ISchedule {
   materials: IMaterial[];
   selectedMaterials: IMaterial[];
   unSelectedMaterials: IMaterial[];
-  saveLocation: Action<String>;
 }
