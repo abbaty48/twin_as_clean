@@ -13,16 +13,4 @@ export const ScheduleState = atom<ISchedule>({
     totalAmountOnline: 0,
     totalAmountOnPickup: 0,
   },
-  effects_UNSTABLE: [
-    ({ onSet, setSelf }) => {
-      onSet((newValue: ISchedule, oldValue: any) => {
-        // console.log('#1');
-        if (!_(newValue, oldValue, { strict: true })) {
-          // console.log('#2');
-          setSelf(newValue);
-        }
-        return;
-      });
-    },
-  ],
 });

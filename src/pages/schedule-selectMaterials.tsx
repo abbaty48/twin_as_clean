@@ -2,18 +2,19 @@ import axios from "axios"
 import { Spin } from "antd"
 import { Async } from "react-async"
 import { Material } from "@pages/schedule-material"
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilCallback, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { ISchedule } from "@commons/models/interfaces/ischedule"
 import { IMaterial } from "@commons/models/interfaces/imaterial"
 import { ScheduleSelector } from "@recoil/selectors/scheduleSelector"
-import { useEffect } from "react"
 import { ScheduleState } from "../recoil/atoms/scheduleAtom"
+import { useCallback, useEffect, useRef, useState } from "react"
 
-export const SelectItemsPhase: React.FC = () => {
+export const SelectItemsPhase = () => {
 
-   // const scheduleState = useRecoilValue(ScheduleSelector)
-   const [scheduleState, setScheduleState] = useRecoilState(ScheduleState)
-
+   // const _timeout = useTimeout()
+   let _timeout: ReturnType<typeof setTimeout> | null;
+   const setScheduleState = useSetRecoilState(ScheduleSelector)
+   const [first, setFirst] = useState('')
    // FETCH MATERIALS FROM SERVER
    const loadMaterial = async () => {
       try {
@@ -81,43 +82,30 @@ export const SelectItemsPhase: React.FC = () => {
          throw new Error(error.message)
       }
    }
-   
-   const setSchedule = useRecoilCallback(({ set }) => {
-      return (newState: ISchedule) => {
-         set(ScheduleSelector, newState)
-      }
-   })
 
-   const addMoreMaterial = () => {
-      const unSelectedMaterials = scheduleState.materials.filter(_m => scheduleState.selectedMaterials.find(_s => _s.id !== _m.id))
-      let selectedMaterials = scheduleState.selectedMaterials;
-      selectedMaterials = [...selectedMaterials, { ...unSelectedMaterials[0] }]
-      // console.log('SM: ', selectedMaterials)
-      // console.log('USM:', unSelectedMaterials)
-      setSchedule({
-         ...scheduleState,
-         unSelectedMaterials,
-         selectedMaterials
-      })
-      // setScheduleState((prevState) => ({
-      //    ...prevState,
-      //    selectedMaterials,
-      //    unSelectedMaterials
-      // }))
-   }
+   // ADDMOREMATERIAL
+   const _addMoreMaterial = useRecoilCallback(({ set }) => async() => {
+      // _timeout = setTimeout(() => {
+         set(ScheduleState, (prevState) => ({
+            ...prevState,
+            unSelectedMaterials: prevState.materials.filter(_m => prevState.selectedMaterials.find(_s => _s.id !== _m.id)),
+            selectedMaterials: [...prevState.selectedMaterials, { ...prevState.unSelectedMaterials[0] }],
+         }))
+      // }, 0);
+   }, [])
 
 
+   // LOADONRESOLVE
    const loadOnResolve = (materials: IMaterial[]) => {
-      try {
-         setSchedule(
-            {
-               ...scheduleState,
-               materials,
-               unSelectedMaterials: materials,
-               selectedMaterials: [{ ...materials[0] }]
-            }
-         )
-      } catch (error) { }
+      setScheduleState((prevStates) => (
+         {
+            ...prevStates,
+            materials,
+            unSelectedMaterials: materials,
+            selectedMaterials: [{ ...materials[0] }]
+         }
+      )
+      )
    }
 
    return (
@@ -135,12 +123,8 @@ export const SelectItemsPhase: React.FC = () => {
                      } else {
 
                         return <>
-                           {
-                              scheduleState.selectedMaterials.map(_option => (
-                                 <Material key={_option.name} materials={scheduleState.unSelectedMaterials} />
-                              ))
-                           }
-                           <button className={'my-2 w-auto m-auto h-10 border border-secondary-color rounded-2xl py-2 px-2'} onClick={addMoreMaterial}>
+                           <ScheduleMaterials />
+                           <button className={'my-2 w-auto m-auto h-10 border border-secondary-color rounded-2xl py-2 px-2'} onClick={_addMoreMaterial}>
                               + Add More
                            </button>
                         </>
@@ -157,4 +141,34 @@ export const SelectItemsPhase: React.FC = () => {
          </div>
       </div>
    )
+}
+
+export const ScheduleMaterials = () => {
+
+   const scheduleState = useRecoilValue(ScheduleSelector)
+
+   return (
+      <div className={''}>
+         {
+            scheduleState.selectedMaterials.map(_option => (
+               <p>{_option.name}</p>
+               // <Material key={_option.name} materials={scheduleState.unSelectedMaterials} />
+            ))
+         }
+      </div>
+   )
+}
+
+export const useTimeout = () => {
+   const _timeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+   // let _timeout: ReturnType<typeof setTimeout> | null;
+
+   useEffect(() => () => {
+      if (_timeout.current) {
+         clearTimeout(_timeout.current)
+         _timeout.current = null
+      }
+
+   }, [])
+   return _timeout
 }
