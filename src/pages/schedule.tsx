@@ -1,32 +1,32 @@
 import { Button } from 'antd'
-import CloseSVG from '@svgs/x.svg'
+import { useContext } from 'react'
 import { ReactSVG } from 'react-svg'
-import { useRecoilValue } from 'recoil'
-import ArrowRight from '@svgs/arrow-right.svg'
-import BackArrowSVG from '@svgs/arrow-left.svg'
+import { Context } from '@stores/store'
 import { useSteps } from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
 import { SummaryPhase } from '@pages/schedule-summary'
 import { LocationPhase } from '@pages/schedule-location'
 import { PhoneNumberPhase } from '@pages/schedule-phonenumber'
 import { SelectItemsPhase } from '@pages/schedule-selectMaterials'
-import { ScheduleSelector } from '@recoil/selectors/scheduleSelector'
 
 
+import CloseSVG from '@svgs/x.svg'
+import ArrowRight from '@svgs/arrow-right.svg'
+import BackArrowSVG from '@svgs/arrow-left.svg'
 
 const Schedule = () => {
 
    const navigate = useNavigate()
-   const getSchedule = useRecoilValue(ScheduleSelector)
+   const [state] = useContext(Context)!
    const { nextStep, prevStep, onStepChange, Steps } = useSteps()
 
    /** STEP VALIDATOR */
    const isValidateStep = () => {
       const { currentIndex } = onStepChange()
       switch (currentIndex) {
-         case 0: return getSchedule.phoneNumber === '' ? !false : !true;
-         case 1: return getSchedule.location === '' ? !false : !true;
-         case 2: return getSchedule.materials.length <= 0 ? !false : !true;
+         case 0: return state.phoneNumber === '' ? !false : !true;
+         case 1: return state.location === '' ? !false : !true;
+         case 2: return state.materials?.length <= 0 ? !false : !true;
       }
    } // end isValidateStep
 

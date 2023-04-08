@@ -1,12 +1,11 @@
-import { useState } from "react"
-import CloseSVG from '@svgs/x.svg'
 import { ReactSVG } from "react-svg"
-import { useRecoilState } from "recoil"
-import { Select, Space, InputNumber, Button } from "antd"
+import { useContext, useState } from "react"
+import { Select, Space, InputNumber } from "antd"
 import { DefaultOptionType } from "antd/es/select"
+import { Context, StateActions } from "@stores/store"
 import { IMaterial } from "@commons/models/interfaces/imaterial"
-import { ScheduleSelector } from "@recoil/selectors/scheduleSelector"
 
+import CloseSVG from '@svgs/x.svg'
 
 /** MATERIAL COMPONENT */
 export const Material = (props: { materials: IMaterial[] }) => {
@@ -14,8 +13,6 @@ export const Material = (props: { materials: IMaterial[] }) => {
    const { materials } = props
    // 
    const { Option } = Select
-   //
-   const [{ }, setSchedule] = useRecoilState(ScheduleSelector)
    //
    const [material, setMaterial] = useState<IMaterial>({
       id: materials[0]?.id,
@@ -25,13 +22,25 @@ export const Material = (props: { materials: IMaterial[] }) => {
       subPrice: materials[0]?.price * 1
    })
    //
-   
-
-   const onQuantityChange = (quantity: number | null) => {
+   const [state, dispatch] = useContext(Context)!;
+   //
+   const onQuantityChange = (targetId: string, quantity: number | null) => {
       const _updateMaterial = Object.assign({ ...material }, { ['quantity']: quantity!, ['subPrice']: material.price * material.quantity })
       setMaterial(_values => ({
          ..._updateMaterial
       }))
+      //
+      dispatch({
+         type: StateActions.SET_SELECTED_MATERIALS,
+         payload: [
+            ...state.selectedMaterials.map(material => {
+               if (material.id === targetId) {
+                  return { ...material, ..._updateMaterial }
+               }
+               return material
+            }) // end map
+         ], // end selectedMaterials
+      }) // end setSchedule
    } // end onQuantityChange
 
    const onMaterialChange = (value: any, option: DefaultOptionType | DefaultOptionType[]) => {
@@ -42,19 +51,17 @@ export const Material = (props: { materials: IMaterial[] }) => {
       setMaterial(_values => ({
          ..._updateMaterial
       }))
-
-      console.log("UM: ", _updateMaterial)
-      setSchedule((prevStates) => ({
-         ...prevStates,
-         selectedMaterials: [
-            ...prevStates.selectedMaterials.map(material => {
+      dispatch({
+         type: StateActions.SET_SELECTED_MATERIALS,
+         payload: [
+            ...state.selectedMaterials.map(material => {
                if (material.id === targetId) {
-                  return {...material, ..._updateMaterial }
+                  return { ...material, ..._updateMaterial }
                }
                return material
             }) // end map
          ], // end selectedMaterials
-      })) // end setSchedule
+      }) // end setSchedule
    } // end onMaterialChange
 
    return <div className='flex flex-nowrap my-1 items-center justify-between space-x-2 relative'>
@@ -77,7 +84,8 @@ export const Material = (props: { materials: IMaterial[] }) => {
       </Select>
 
       <InputNumber size='large' min={1} defaultValue={material.quantity} placeholder={'Quantity'}
-         className={'py-2 placeholder:text-[#919EAB] border border-[#919EAB] h-[56px] rounded-2xl'} onChange={onQuantityChange} />
+         className={'py-2 placeholder:text-[#919EAB] border border-[#919EAB] h-[56px] rounded-2xl'}
+         onChange={(newQuantity) => onQuantityChange(material.id, newQuantity)} />
       <button className={'hover:bg-none hover:animate-pulse flex items-center w-4 h-4'}>
          <ReactSVG src={CloseSVG} />
       </button>

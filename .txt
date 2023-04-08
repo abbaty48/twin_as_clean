@@ -75,6 +75,32 @@ const Material = (props: { materials: IMaterial[] }) => {
       <InputNumber size='large' min={1} defaultValue={material.quantity} placeholder={'Quantity'}
          className={'my-3 border border-[#E1DFDD] placeholder:text-[#919EAB]'} onChange={onQuantityChange} />
    </div>
+
+    return <div className='flex flex-nowrap my-1 items-center justify-between space-x-2 relative'>
+      <Select size='large' placeholder='Cloth Type' labelInValue={false} bordered={false}
+         defaultValue={material.name}
+         className={'py-2 bg-white placeholder:text-[#919EAB] w-9/12 border border-[#919EAB] h-[56px] rounded-2xl'}
+         onChange={onMaterialChange}
+      >
+         {
+            materials.map(_option =>
+               <Option key={_option.name} value={JSON.stringify({ targetId: material.id, id: _option.id, name: _option.name, price: _option.price })}>
+                  <Space>
+                     <span>{_option.name}</span>
+                     <strong>({_option.price})</strong>
+                  </Space>
+               </Option>
+            )
+         }
+
+      </Select>
+
+      <InputNumber size='large' min={1} defaultValue={material.quantity} placeholder={'Quantity'}
+         className={'py-2 placeholder:text-[#919EAB] border border-[#919EAB] h-[56px] rounded-2xl'} onChange={onQuantityChange} />
+      <button className={'hover:bg-none hover:animate-pulse flex items-center w-4 h-4'}>
+         <ReactSVG src={CloseSVG} />
+      </button>
+   </div>
 }
 
 const SelectItemsPhase = () => {
@@ -189,6 +215,7 @@ const SelectItemsPhase = () => {
 
 
  <Async promiseFn={loadMaterial}>
+
                {
                   ({ data, error, isLoading }) => {
                      if (isLoading) return <Spin size='large' spinning={true} className={'place-self-center object-center'} />
@@ -235,3 +262,22 @@ const SelectItemsPhase = () => {
                   </>
             }
          </>
+
+
+         const { data, error, isLoading } = useFetch<IMaterial[]>('', (data) => {
+      if (data !== null) {
+          dispatch({
+             type: StateActions.SET_STATES,
+             payload: {
+                ...state,
+                materials: data,
+                selectedMaterials: [data[0]],
+                unSelectedMaterials: data
+             }
+         })
+         dispatch({
+            type: StateActions.SET_PHONENUMBER,
+            payload: '134'
+         })
+      }
+   })

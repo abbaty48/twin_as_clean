@@ -1,7 +1,7 @@
 import { App, Input } from "antd"
+import { useContext } from "react"
 import { ReactSVG } from "react-svg"
-import { useRecoilState } from "recoil"
-import { ScheduleSelector } from "@recoil/selectors/scheduleSelector"
+import { Context, StateActions } from "@stores/store"
 
 import CallSVG from '@svgs/call.svg'
 
@@ -9,7 +9,7 @@ export const PhoneNumberPhase = () => {
 
    const key = 'phoneNumberKey'
    const { message } = App.useApp()
-   const [getSchedule, setSchedule] = useRecoilState(ScheduleSelector)
+   const [state, dispatch] = useContext(Context)!
 
    return (
       <>
@@ -20,15 +20,12 @@ export const PhoneNumberPhase = () => {
                required autoFocus placeholder='Phone Number'
                onChange={(e) => {
                   if (/^[0-9]*$/.test(e.target.value)) {
-                     setSchedule((_preStates) => ({
-                        ..._preStates,
-                        phoneNumber: e.target.value
-                     }))
+                     dispatch({ type: StateActions.SET_PHONENUMBER, payload: e.target.value })
                   } else {
                      message.warning({ key, content: 'Only a number is allowed.' })
                   }
                }}
-               value={getSchedule.phoneNumber}
+               value={state.phoneNumber}
                className={'my-4 rounded-2xl py-2 px-4 w-full h-[56px] border border-[#E1DFDD] placeholder:text-[#919EAB]'} />
          </div>
       </>

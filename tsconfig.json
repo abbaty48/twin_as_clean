@@ -30,8 +30,10 @@
       "@recoil/*": ["src/recoil/*"],
       "@svgs/*": ["src/assets/svgs/*"],
       "@commons/*": ["src/commons/*"],
+      "@stores/*": ["src/states/stores/*"],
       "@models/*": ["src/commons/models/*"],
       "@components/*": ["src/components/*"],
+      "@reducers/*": ["src/states/reducers/*"],
     },
   },
   "include": ["src", "extensions.d.ts"]
