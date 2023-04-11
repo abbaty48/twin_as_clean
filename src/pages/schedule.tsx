@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import { useContext } from 'react'
 import { ReactSVG } from 'react-svg'
-import { Context } from '@stores/store'
+import { StoreContext } from '@stores/store'
 import { useSteps } from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
 import { SummaryPhase } from '@pages/schedule-summary'
@@ -17,16 +17,19 @@ import BackArrowSVG from '@svgs/arrow-left.svg'
 const Schedule = () => {
 
    const navigate = useNavigate()
-   const [state] = useContext(Context)!
+   const { state } = useContext(StoreContext)
    const { nextStep, prevStep, onStepChange, Steps } = useSteps()
 
    /** STEP VALIDATOR */
    const isValidateStep = () => {
-      const { currentIndex } = onStepChange()
+      const { currentIndex, nextIndex } = onStepChange()
       switch (currentIndex) {
          case 0: return state.phoneNumber === '' ? !false : !true;
          case 1: return state.location === '' ? !false : !true;
          case 2: return state.materials?.length <= 0 ? !false : !true;
+         default: {
+            return (currentIndex >= nextIndex) ? false : true
+         }
       }
    } // end isValidateStep
 

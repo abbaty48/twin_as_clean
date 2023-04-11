@@ -1,15 +1,15 @@
 import { App } from 'antd'
 import Home from '@pages/home';
-import { Store } from '@stores/store';
 import Schedule from '@pages/schedule';
 import Subscribe from '@pages/subscribe';
 import Completion from '@pages/completion';
+import { StoreProvider } from '@stores/store';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
 function Main() {
 
   return (
-    <Store>
+    <StoreProvider>
       <App>
         <div className='relative h-screen font-body text-primary-color'>
           <div className={'relative flex flex-col md:max-w-screen-lg w-[85%] m-auto py-4 h-full space-y-2'}>
@@ -29,7 +29,7 @@ function Main() {
               <Router>
                 <Routes>
                   <Route path='/' element={<Home />} />
-                  <Route path='/schedule' element={<Schedule />}  />
+                  <Route path='/schedule' element={<Schedule />} />
                   <Route path="/subscribe" element={<Subscribe />} />
                   <Route path="/completion" element={<Completion />} />
                   <Route element={<Home />} />
@@ -39,7 +39,7 @@ function Main() {
           </div>
         </div>
       </App>
-    </Store>);
+    </StoreProvider>);
 }
 
 export default Main;

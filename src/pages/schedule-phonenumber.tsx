@@ -1,7 +1,7 @@
 import { App, Input } from "antd"
 import { useContext } from "react"
 import { ReactSVG } from "react-svg"
-import { Context, StateActions } from "@stores/store"
+import { StoreContext, StateActions } from "@stores/store"
 
 import CallSVG from '@svgs/call.svg'
 
@@ -9,7 +9,7 @@ export const PhoneNumberPhase = () => {
 
    const key = 'phoneNumberKey'
    const { message } = App.useApp()
-   const [state, dispatch] = useContext(Context)!
+   const {state, dispatch} = useContext(StoreContext)!
 
    return (
       <>

@@ -2,7 +2,7 @@ import { ReactSVG } from "react-svg"
 import { useContext, useState } from "react"
 import { Select, Space, InputNumber } from "antd"
 import { DefaultOptionType } from "antd/es/select"
-import { Context, StateActions } from "@stores/store"
+import { StoreContext, StateActions } from "@stores/store"
 import { IMaterial } from "@commons/models/interfaces/imaterial"
 
 import CloseSVG from '@svgs/x.svg'
@@ -22,10 +22,10 @@ export const Material = (props: { materials: IMaterial[] }) => {
       subPrice: materials[0]?.price * 1
    })
    //
-   const [state, dispatch] = useContext(Context)!;
+   const { state, dispatch } = useContext(StoreContext)!;
    //
    const onQuantityChange = (targetId: string, quantity: number | null) => {
-      const _updateMaterial = Object.assign({ ...material }, { ['quantity']: quantity!, ['subPrice']: material.price * material.quantity })
+      const _updateMaterial = Object.assign({ ...material }, { 'quantity': quantity!, 'subPrice': material.price * material.quantity })
       setMaterial(_values => ({
          ..._updateMaterial
       }))

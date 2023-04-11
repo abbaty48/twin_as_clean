@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 export function useFetch<T>(
   url: string,
-  onSuccess?: (data: any) => void,
+  onSuccess?: (data: T) => void,
   onFailed?: (error: string) => void
 ) {
   interface useFetchStates {
@@ -31,7 +31,7 @@ export function useFetch<T>(
     //
     setStates(['isLoading'], [true]);
     // FETCH URI
-    async function getData(this: any) {
+    async function getData() {
       try {
         const data = (
           await axios.get<T>(url, {
@@ -40,10 +40,10 @@ export function useFetch<T>(
         ).data;
         setStates(['data', 'isLoading'], [data, false]);
         // onSuccess callback
-        onSuccess?.call(this, data);
+        onSuccess!(data);
       } catch (error: any) {
         setStates(['error', 'isLoading'], [error.message, false]);
-        onFailed?.call(this, error);
+        onFailed!(error);
       }
     }
     getData();

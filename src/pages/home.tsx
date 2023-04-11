@@ -1,6 +1,6 @@
 import { Avatar, Rate } from 'antd'
-import { Link } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
+import { Link } from 'react-router-dom'
 
 import linkedInSVG from '@svgs/in.svg'
 import facebookSVG from '@svgs/fb.svg'

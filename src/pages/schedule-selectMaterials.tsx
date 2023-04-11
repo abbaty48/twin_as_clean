@@ -1,40 +1,48 @@
 import { Spin } from "antd"
-import { useContext } from "react"
 import { useFetch } from "@hooks/useFetch"
+import { useCallback, useContext } from "react"
 import { Material } from "@pages/schedule-material"
-import { Context, StateActions } from "@stores/store"
+import { StoreContext, StateActions } from "@stores/store"
 import { IMaterial } from "@commons/models/interfaces/imaterial"
 
-export const SelectItemsPhase = () => {
+export const SelectItemsPhase: React.FC = () => {
 
-   const [state, dispatch] = useContext(Context)!;
+   const { state, dispatch } = useContext(StoreContext);
    const { data, error, isLoading } = useFetch<IMaterial[]>('http://18.209.48.108/materials', (data) => {
-      if (data !== null) {
+      initialDispatch(data)
+   }) // end useFetch
+
+   const initialDispatch = useCallback(
+      (data: IMaterial[]) => {
          dispatch({
             type: StateActions.SET_STATES,
             payload: {
                ...state,
                materials: data,
+               unSelectedMaterials: data,
                selectedMaterials: [data[0]],
-               unSelectedMaterials: data
             }
          }) // end dispatch
-      } // end  if data != null
-   }) // end useFetch
+      },
+      [dispatch, state],
+   )
    // ADDMOREMATERIAL
-   const addMoreMaterial = () => {
-      const unSelectedMaterials = state.materials.filter(_m => state.selectedMaterials.find(_s => _s.id !== _m.id));
-      const selectedMaterials = [...state.selectedMaterials, { ...unSelectedMaterials[0] }];
+   const addMoreMaterial = useCallback(
+      () => {
+         const unSelectedMaterials = state.materials.filter(_m => state.selectedMaterials.find(_s => _s.id !== _m.id));
+         const selectedMaterials = [...state.selectedMaterials, { ...unSelectedMaterials[0] }];
 
-      dispatch({
-         type: StateActions.SET_STATES,
-         payload: {
-            ...state,
-            selectedMaterials,
-            unSelectedMaterials
-         }
-      })
-   }
+         dispatch({
+            type: StateActions.SET_STATES,
+            payload: {
+               ...state,
+               selectedMaterials,
+               unSelectedMaterials
+            }
+         })
+      },
+      [dispatch, state],
+   )
 
    return (
       <div className={'flex flex-col justify-between space-y-2 my-1 m-auto w-11/12'}>
@@ -53,16 +61,22 @@ export const SelectItemsPhase = () => {
                         ))
                      }
                   </div>
-                  <button className={'my-2 w-full h-10 bg-secondary-color rounded-2xl py-3 px-2'} onClick={addMoreMaterial}>
-                     + Add More
-                  </button>
+                  {
+                     state.selectedMaterials?.length > 0 && (
+                        <>
+                           <button className={'my-2 w-full h-10 bg-secondary-color rounded-2xl py-3 px-2'} onClick={addMoreMaterial}>
+                              + Add More
+                           </button>
+                           <div className={'flex flex-row items-center justify-between w-full py-2 px-5 rounded-2xl bg-[#f1f1f1]'}>
+                              <p className={'text-[18px]'}>Amount</p>
+                              <strong className={'text-[24px] font-semibold'}>{state.totalAmountOnline}</strong>
+                           </div>
+                        </>
+                     )
+                  }
                </>
             )
          }
-         <div className={'flex flex-row items-center justify-between w-full py-2 px-5 rounded-2xl bg-[#f1f1f1]'}>
-            <p className={'text-[18px]'}>Amount</p>
-            {/* <strong className={'text-[24px] font-semibold'}>{totalAmountOnline}</strong> */}
-         </div>
       </div >
    )
 }

@@ -1,13 +1,13 @@
 import { Input } from "antd"
 import { useContext } from 'react'
 import { ReactSVG } from "react-svg"
-import { Context, StateActions } from "@stores/store"
+import { StoreContext, StateActions } from "@stores/store"
 
 import MapPinSVG from '@svgs/map-pin.svg'
 
 export const LocationPhase = () => {
 
-   const [state, dispatch] = useContext(Context)!
+   const { state, dispatch } = useContext(StoreContext)!
 
    return (
       <div className={'space-y-6 my-3 w-11/12 m-auto'}>

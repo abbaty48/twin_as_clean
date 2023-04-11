@@ -1,5 +1,5 @@
-import React, { Dispatch, useMemo } from 'react';
-import react, { createContext, useReducer } from 'react';
+import React, { Dispatch, FC } from 'react';
+import { createContext, useReducer } from 'react';
 import { scheduleReducer } from '@reducers/scheduleReducer';
 import { ISchedule } from '@/src/commons/models/interfaces/ischedule';
 
@@ -27,9 +27,10 @@ const scheduleInitialStates: ISchedule = {
   totalAmountOnPickup: 0,
 };
 
-export const Context = createContext<[state: ISchedule, action: Dispatch<IStateAction>] | null>(null);
+export const StoreContext =
+  createContext<{ state: ISchedule, dispatch: Dispatch<IStateAction> }>({ state: scheduleInitialStates, dispatch: () => null });
 
-export const Store = (props: { children: React.ReactNode }) => {
+export const StoreProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(scheduleReducer, scheduleInitialStates);
-  return <Context.Provider value={[state, dispatch]}>{props.children}</Context.Provider>;
+  return <StoreContext.Provider value={{ state, dispatch }}>{children}</StoreContext.Provider>;
 };
