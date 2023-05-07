@@ -1,7 +1,7 @@
 import { App, Input } from "antd"
 import { useContext } from "react"
 import { ReactSVG } from "react-svg"
-import { StoreContext, StateActions } from "@stores/store"
+import { StoreContext } from "@/src/states/scheduleState"
 
 import CallSVG from '@svgs/call.svg'
 
@@ -9,7 +9,7 @@ export const PhoneNumberPhase = () => {
 
    const key = 'phoneNumberKey'
    const { message } = App.useApp()
-   const {state, dispatch} = useContext(StoreContext)!
+   const { state, dispatch } = useContext(StoreContext)
 
    return (
       <>
@@ -20,7 +20,7 @@ export const PhoneNumberPhase = () => {
                required autoFocus placeholder='Phone Number'
                onChange={(e) => {
                   if (/^[0-9]*$/.test(e.target.value)) {
-                     dispatch({ type: StateActions.SET_PHONENUMBER, payload: e.target.value })
+                     dispatch({ type: 'SET_PHONENUMBER', payload: e.target.value })
                   } else {
                      message.warning({ key, content: 'Only a number is allowed.' })
                   }

@@ -3,14 +3,14 @@ import Home from '@pages/home';
 import Schedule from '@pages/schedule';
 import Subscribe from '@pages/subscribe';
 import Completion from '@pages/completion';
-import { StoreProvider } from '@stores/store';
+import { AppProvider } from '@/src/states/scheduleState';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
 function Main() {
 
   return (
-    <StoreProvider>
-      <App>
+    <App>
+      <AppProvider>
         <div className='relative h-screen font-body text-primary-color'>
           <div className={'relative flex flex-col md:max-w-screen-lg w-[85%] m-auto py-4 h-full space-y-2'}>
             <div className={'flex flex-row flex-wrap justify-between items-center'}>
@@ -38,8 +38,9 @@ function Main() {
             </div>
           </div>
         </div>
-      </App>
-    </StoreProvider>);
+      </AppProvider>
+    </App>
+  )
 }
 
 export default Main;

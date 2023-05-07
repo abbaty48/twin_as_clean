@@ -1,18 +1,16 @@
 import { useContext } from "react"
-import { StoreContext } from "@stores/store"
+import { StoreContext } from "@/src/states/scheduleState"
 
 export const SummaryPhase = () => {
 
    const { state } = useContext(StoreContext)
+
    return (
       <div className={'flex flex-col space-y-3 my-1 m-auto w-11/12 animate-fadeOut'}>
          <h1 className={'text-[32px] leading-10 font-medium'}>Summary</h1>
-         <div className={'flex flex-nowrap justify-between'}>
-            <div className={'space-y-1'}>
-               <strong className={'text-2xl'}>{ }</strong>
-               <p className={'text-base leading-[21.15px]'}>{ }</p>
-            </div>
-            <button type='button' className={'bg-secondary-color h-fit py-1 px-3 rounded-3xl text-white text-[13px]'} >Change</button>
+         <div className={'flex flex-wrap justify-between space-y-1'}>
+            <strong className={'text-2xl'}>{state.phoneNumber}</strong>
+            <p className={'text-base leading-[21.15px]'}>{state.location}</p>
          </div>
          <div className={'my-2'}>
             {

@@ -1,11 +1,11 @@
 import { Button } from 'antd'
 import { useContext } from 'react'
 import { ReactSVG } from 'react-svg'
-import { StoreContext } from '@stores/store'
 import { useSteps } from '@/src/hooks/useSteps'
 import { Link, useNavigate } from 'react-router-dom'
 import { SummaryPhase } from '@pages/schedule-summary'
 import { LocationPhase } from '@pages/schedule-location'
+import { StoreContext } from '@/src/states/scheduleState'
 import { PhoneNumberPhase } from '@pages/schedule-phonenumber'
 import { SelectItemsPhase } from '@pages/schedule-selectMaterials'
 
@@ -43,6 +43,8 @@ const Schedule = () => {
                <Button type='text' onClick={() => navigate('/')} className={'hover:bg-transparent hover:animate-pulse flex items-center'} icon={<ReactSVG src={CloseSVG} />} />
             </div>
             {/* STEPS */}
+            {/* <SelectItemsPhase /> */}
+
             <Steps
                showIndicator={true}
                items={[

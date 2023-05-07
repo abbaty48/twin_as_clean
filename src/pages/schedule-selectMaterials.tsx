@@ -1,47 +1,53 @@
 import { Spin } from "antd"
 import { useFetch } from "@hooks/useFetch"
-import { useCallback, useContext } from "react"
 import { Material } from "@pages/schedule-material"
-import { StoreContext, StateActions } from "@stores/store"
+import { StoreContext } from "@/src/states/scheduleState"
+import { useCallback, useContext, useEffect } from "react"
 import { IMaterial } from "@commons/models/interfaces/imaterial"
 
 export const SelectItemsPhase: React.FC = () => {
 
-   const { state, dispatch } = useContext(StoreContext);
-   const { data, error, isLoading } = useFetch<IMaterial[]>('http://18.209.48.108/materials', (data) => {
-      initialDispatch(data)
-   }) // end useFetch
+   const { state, dispatch } = useContext(StoreContext)
 
-   const initialDispatch = useCallback(
-      (data: IMaterial[]) => {
-         dispatch({
-            type: StateActions.SET_STATES,
-            payload: {
-               ...state,
-               materials: data,
-               unSelectedMaterials: data,
-               selectedMaterials: [data[0]],
-            }
-         }) // end dispatch
+   const { data, error, isLoading } = useFetch<IMaterial[]>('http://18.209.48.108/materials', true) // end useFetch
+
+   useEffect(() => {
+      console.log('IN')
+      setTimeout(() => {
+         initiateMaterials(data)
+      }, 0);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [data])
+
+   const initiateMaterials = useCallback(
+      (data: IMaterial[] | null) => {
+         if (data) {
+            // Set the first material as the first selected
+            const selectedMaterials = [data[0]];
+            const unSelectedMaterials = data.filter(material => material.id !== data[0].id)
+            dispatch({
+               type: 'SET_STATES',
+               payload: {
+                  ...state,
+                  materials: data,
+                  selectedMaterials,
+                  unSelectedMaterials,
+               },
+            }) // end dispatch
+            // Set unSelected Materials
+         }
       },
-      [dispatch, state],
+      [],
    )
    // ADDMOREMATERIAL
    const addMoreMaterial = useCallback(
       () => {
-         const unSelectedMaterials = state.materials.filter(_m => state.selectedMaterials.find(_s => _s.id !== _m.id));
-         const selectedMaterials = [...state.selectedMaterials, { ...unSelectedMaterials[0] }];
-
          dispatch({
-            type: StateActions.SET_STATES,
-            payload: {
-               ...state,
-               selectedMaterials,
-               unSelectedMaterials
-            }
+            type: 'SET_SELECTED_MATERIAL',
+            payload: state.unSelectedMaterials[0]
          })
       },
-      [dispatch, state],
+      [dispatch, state.unSelectedMaterials],
    )
 
    return (
@@ -54,26 +60,28 @@ export const SelectItemsPhase: React.FC = () => {
             data &&
                (data?.length <= 0) ? <p>No Material available yet!.</p> : (
                <>
-                  <div className={'max-h-48 overflow-y-auto'}>
+                  <div className={'max-h-48 px-2 overflow-y-auto'}>
                      {
-                        state.selectedMaterials?.map(_option => (
-                           <Material key={_option.name} materials={state.unSelectedMaterials} />
-                        ))
+                        state.selectedMaterials.map(material => <Material key={material.id} materials={state.unSelectedMaterials} currentMaterial={material} />)
                      }
                   </div>
-                  {
-                     state.selectedMaterials?.length > 0 && (
-                        <>
-                           <button className={'my-2 w-full h-10 bg-secondary-color rounded-2xl py-3 px-2'} onClick={addMoreMaterial}>
+                  <>
+                     {
+                        (state.selectedMaterials?.length > 0 && state.unSelectedMaterials.length > 0) && (
+                           <button className={'my-2 mx-auto w-auto h-10 bg-secondary-color rounded-2xl py-3 px-2 text-white hover:animate-pulse hover:bg-opacity-75'} onClick={addMoreMaterial}>
                               + Add More
                            </button>
+                        )
+                     }
+                     {
+                        (state.selectedMaterials?.length > 0) && (
                            <div className={'flex flex-row items-center justify-between w-full py-2 px-5 rounded-2xl bg-[#f1f1f1]'}>
                               <p className={'text-[18px]'}>Amount</p>
                               <strong className={'text-[24px] font-semibold'}>{state.totalAmountOnline}</strong>
                            </div>
-                        </>
-                     )
-                  }
+                        )
+                     }
+                  </>
                </>
             )
          }
