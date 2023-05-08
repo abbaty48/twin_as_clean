@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios, { AxiosHeaders } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { DummyData } from '../dummyData';
 
 export function useFetch<T>(
   url: string,
@@ -40,19 +39,20 @@ export function useFetch<T>(
       setState(['isLoading'], [true]);
       fetch();
     }
-  }, [url]);
+  }, []);
 
   // FETCH URI
   const fetch = useCallback(async () => {
     setState(['isLoading'], [true]);
     try {
-      /* const data = (
+      const data = (
         await axios.get<T>(url, {
           headers,
         })
-      ).data; */
-      const data = DummyData;
-      setState(['data', 'isLoading'], [data, false]);
+      ).data;
+      setTimeout(() => {
+        setState(['data', 'isLoading'], [data, false]);
+      }, 1000);
       // onSuccess callback
       if (onSuccess) {
         onSuccess(data as T);
@@ -61,8 +61,8 @@ export function useFetch<T>(
       setState(['error', 'isLoading'], [error.message, false]);
       if (onFailed) {
         onFailed(error);
-      }
-    }
+      } // end if
+    } // end catch
   }, []);
 
   return { ...states, fetch };

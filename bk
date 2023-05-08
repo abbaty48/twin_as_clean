@@ -1,55 +1,7 @@
-import React from "react"
-import { Spin } from "antd"
-import { useFetch } from "@hooks/useFetch"
-import { useCallback, useContext } from "react"
-import { Material } from "@pages/schedule-material"
-import { StoreContext } from "@/src/states/scheduleState"
-import { IMaterial } from "@commons/models/interfaces/imaterial"
-
-const SelectItemsPhase: React.FC = () => {
-
-   const { state, dispatch } = useContext(StoreContext)
-
-   const { error, isLoading } = useFetch<IMaterial[]>('http://18.209.48.108/materials', true, (data) => {
-      initiateMaterials(data)
-   }) // end useFetch
-
-   const initiateMaterials = useCallback(
-      (data: IMaterial[] | null) => {
-         if (data) {
-            // Set the first material as the first selected
-            const selectedMaterials = [data[0]];
-            const unSelectedMaterials = data.filter(material => material.id !== data[0].id)
-            dispatch({
-               type: 'SET_STATES',
-               payload: {
-                  ...state,
-                  materials: data,
-                  selectedMaterials,
-                  unSelectedMaterials,
-               },
-            }) // end dispatch
-            // Set unSelected Materials
-         } // end if data
-      }, // end useCallback callback
-      [dispatch, state],
-   )
-
-   // ADDMOREMATERIAL
-   const addMoreMaterial = useCallback(
-      () => {
-         dispatch({
-            type: 'SET_SELECTED_MATERIAL',
-            payload: state.unSelectedMaterials[0]
-         })
-      },
-      [dispatch, state.unSelectedMaterials],
-   )
-
-   return (
+return (
       <div className={'flex flex-col justify-between space-y-2 my-1 m-auto w-11/12'}>
          <h1 className={'text-[32px] leading-10 font-black text-black'}>Select Items</h1>
-         <p className={'text-lg leading-[132.2%]'}>Select Material type and the quantity</p>
+         <p className={'text-lg leading-[132.2%]'}>Select cloth type and quantity</p>
          {isLoading && <Spin size='large' spinning={isLoading} className={'place-self-center object-center'} />}
          {error && <p className={'my-4 text-center text-orange-700 font-semibold text-xs'}>Oops!! something went wrong: {error}</p>}
          {
@@ -83,6 +35,3 @@ const SelectItemsPhase: React.FC = () => {
          }
       </div >
    )
-}
-
-export default React.memo(SelectItemsPhase)

@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
 
 interface IStepsProps {
    showLabel?: boolean;
@@ -36,7 +36,6 @@ const Indicators = (props: { Items: IStepItemProps[], currentIndex: number, show
 }
 /** STEPS */
 export const useSteps = () => {
-
    // 
    let _items: IStepItemProps[] = []
    // 
@@ -45,11 +44,12 @@ export const useSteps = () => {
       previousIndex: 0,
       nextIndex: _items?.length ? 1 : 0
    })
+
    /** */
    const CurrentChild = (props: { activeIndex: number, items: IStepItemProps[] }) => {
       const { activeIndex, items } = props
       const Child = () => items[activeIndex].children as JSX.Element
-      return <Child />
+      return < Child />
    }
 
    /** nextStep -> move to the next step */
